@@ -2,6 +2,8 @@
 dj-stripe Migrations Tests
 """
 import pytest
+
+import requests
 from django.test import TestCase, override_settings
 from django.core.exceptions import ImproperlyConfigured
 from django_ghost.settings import django_ghost_settings
@@ -20,7 +22,12 @@ class TestSettings(TestCase):
         with pytest.raises(ImproperlyConfigured):
             django_ghost_settings.get_ghost_admin_api_auth_header()
 
-    @override_settings(GHOST_ADMIN_API_KEY="invalid")
-    def test_invalid_ghost_api_key(self):
-        with pytest.raises(ImproperlyConfigured):
-            django_ghost_settings.get_ghost_admin_api_auth_header()
+    @override_settings(
+        GHOST_ADMIN_API_APP_ID="app_id", GHOST_ADMIN_API_APP_SECRET="secret"
+    )
+    def test_ghost_admin_api_auth_header(self):
+        header = django_ghost_settings.get_ghost_admin_api_auth_header()
+        url = django_ghost_settings.get_ghost_admin_members_api_url()
+        res = requests.get(url)
+
+        assert res.status_code == 403

@@ -1,4 +1,5 @@
 from datetime import datetime as date
+import jwt
 
 from django.db.models import Model
 from django.conf import settings
@@ -22,10 +23,28 @@ class DjangoGhostSettings:
             )
 
     def get_ghost_admin_app_id(self) -> str:
-        return getattr(settings, "GHOST_ADMIN_APP_ID")
+        try:
+            return getattr(settings, "GHOST_ADMIN_API_APP_ID")
+        except AttributeError:
+            raise ImproperlyConfigured(
+                "GHOST_ADMIN_API_APP_ID setting is required to use django-ghost. Please add GHOST_ADMIN_API_APP_ID to settings.py"
+            )
 
     def get_ghost_admin_app_secret(self) -> str:
-        return getattr(settings, "GHOST_ADMIN_APP_SECRET")
+        try:
+            return getattr(settings, "GHOST_ADMIN_API_APP_SECRET")
+        except AttributeError:
+            raise ImproperlyConfigured(
+                "GHOST_ADMIN_API_APP_SECRET setting is required to use django-ghost. Please add GHOST_ADMIN_API_APP_SECRET to settings.py"
+            )
+
+    def get_ghost_url(self) -> str:
+        try:
+            return getattr(settings, "GHOST_API_URL")
+        except AttributeError:
+            raise ImproperlyConfigured(
+                "GHOST_API_URL setting is required to use django-ghost. Please add GHOST_API_URL to settings.py"
+            )
 
     def get_ghost_admin_api_auth_header(self) -> str:
 
@@ -39,7 +58,15 @@ class DjangoGhostSettings:
 
         # Create the token (including decoding secret)
         key = bytes.fromhex(secret)
-        token = jwt.encode(payload, key, algorithm="HS256", headers=header)  # type: ignore
+        import pdb
+
+        pdb.set_trace()
+        token = jwt.encode(payload, key, algorithm="HS256", headers=header)
+        headers = {"Authorization": "Ghost {}".format(token)}
+        return header
+
+    def get_ghost_admin_members_api_url(self):
+        return f"{self.get_ghost_url()}/ghost/api/admin/members/"
 
 
 django_ghost_settings = DjangoGhostSettings()

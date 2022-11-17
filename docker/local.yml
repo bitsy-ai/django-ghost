@@ -17,7 +17,7 @@ services:
     volumes:
       - ../:/workspace:z
     ports:
-      - "8801:8000"
+      - "8802:8000"
     env_file:
       - .env
     command:
@@ -40,5 +40,9 @@ services:
       - "2368:2368"
     environment:
       NODE_ENV: development
+      database__client: sqlite3
+      database__connection__filename: content/data/ghost-test.db
+      database__useNullAsDefault: "true"
+      database__debug: "true"
     volumes:
       - ../.ghost:/var/lib/ghost/content:z
