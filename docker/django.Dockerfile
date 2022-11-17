@@ -15,10 +15,6 @@ RUN apt-get update \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
-# install nsc command-line tool
-RUN wget https://github.com/nats-io/nsc/releases/download/2.7.1/nsc-linux-amd64.zip -O nsc-linux-amd64.zip
-RUN unzip nsc-linux-amd64.zip -d /usr/local/bin
-
 RUN mkdir /workspace
 WORKDIR /workspace
 ADD requirements.txt .
@@ -28,7 +24,7 @@ RUN python -m pip install --upgrade pip wheel setuptools
 RUN PYTHON=$(which python3) make dev-install
 
 ADD docker/entrypoint /entrypoint
-RUN echo "/workspace" > /usr/local/lib/python3.9/site-packages/django_nats_nkeys.pth
+RUN echo "/workspace" > /usr/local/lib/python3.9/site-packages/django_ghost.pth
 
 
 ENTRYPOINT [ "/entrypoint" ]

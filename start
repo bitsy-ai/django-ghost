@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+python manage.py migrate
+python manage.py nsc_init || echo "Failed to initialize operator"
+django-admin runserver 0.0.0.0:8000
