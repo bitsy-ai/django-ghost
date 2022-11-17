@@ -36,5 +36,6 @@ Settings
 ===========
 
 ### Basic Settings
+`GHOST_MEMBER_MODEL` (default: return value of `django.contrib.auth.get_user_model()` )
 `GHOST_API_URL` (default: `"http://localhost` or `$GHOST_API_URL` environment var)
 `GHOST_ADMIN_TOKEN` (default: `$GHOST_ADMIN_TOKEN` environment var)
