@@ -17,3 +17,6 @@ class TestSignals(TestCase):
         user = UserModel.objects.create(email=email)
         ghost_member = GhostMember.objects.get(email=email)
         assert user.email == ghost_member.email
+        # updating user shouldn't throw any errors
+        user.is_staff = True
+        user.save()
