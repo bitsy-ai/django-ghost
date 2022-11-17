@@ -1,9 +1,11 @@
 from django.db import models
-from django.conf import settings
+from .settings import django_ghost_settings
 
 
 class GhostMember(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        django_ghost_settings.get_member_model_string(), on_delete=models.CASCADE
+    )
     email = models.EmailField()
     id = models.CharField(max_length=255, primary_key=True)
     uuid = models.UUIDField()

@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.conf import settings
 
 from .settings import django_ghost_settings
+from .models import GhostMember
 
 GhostMemberModel = django_ghost_settings.get_member_model()
 
