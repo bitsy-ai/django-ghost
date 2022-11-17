@@ -11,7 +11,7 @@ long_description: str = open(
 install_requires = [
     "django>=3.2,<4",
     "psycopg2",
-    "requests~=2.28",
+    "requests>=2.28",
 ]
 
 python_requires = ">3.7"
