@@ -11,7 +11,7 @@ class TestSettings(TestCase):
     def setUp(self):
         return super().setUp()
 
-    @override_settings(GHOST_MEMBER_MODELL="invalid")
+    @override_settings(GHOST_MEMBER_MODEL="invalid.foo")
     def test_invalid_ghost_member_model(self):
         with pytest.raises(ImproperlyConfigured):
             django_ghost_settings.get_member_model()
