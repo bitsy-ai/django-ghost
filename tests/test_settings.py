@@ -18,16 +18,26 @@ class TestSettings(TestCase):
         with pytest.raises(ImproperlyConfigured):
             django_ghost_settings.get_member_model()
 
+    @override_settings(GHOST_ADMIN_API_APP_ID=None, GHOST_ADMIN_API_APP_SECRET=None)
     def test_missing_ghost_api_key(self):
         with pytest.raises(ImproperlyConfigured):
-            django_ghost_settings.get_ghost_admin_api_auth_header()
+            django_ghost_settings.get_ghost_admin_app_secret()
 
     @override_settings(
-        GHOST_ADMIN_API_APP_ID="app_id", GHOST_ADMIN_API_APP_SECRET="secret"
+        # test are invalid keys
+        GHOST_ADMIN_API_APP_ID="13768243d04dac0001bfc4e3",
+        GHOST_ADMIN_API_APP_SECRET="a823dbdaa262620f9f94f026298873d03534fed5ae39024019479519471b37e3",
     )
-    def test_ghost_admin_api_auth_header(self):
-        header = django_ghost_settings.get_ghost_admin_api_auth_header()
+    def test_invalid_ghost_admin_api_auth_header(self):
+        headers = django_ghost_settings.get_ghost_admin_api_auth_header()
         url = django_ghost_settings.get_ghost_admin_members_api_url()
-        res = requests.get(url)
+        res = requests.get(url, headers=headers)
 
-        assert res.status_code == 403
+        assert res.status_code == 401
+
+    def test_valid_ghost_admin_api_auth_header(self):
+        headers = django_ghost_settings.get_ghost_admin_api_auth_header()
+        url = django_ghost_settings.get_ghost_admin_members_api_url()
+        res = requests.get(url, headers=headers)
+
+        assert res.status_code == 200

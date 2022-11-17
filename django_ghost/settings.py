@@ -24,7 +24,10 @@ class DjangoGhostSettings:
 
     def get_ghost_admin_app_id(self) -> str:
         try:
-            return getattr(settings, "GHOST_ADMIN_API_APP_ID")
+            result = getattr(settings, "GHOST_ADMIN_API_APP_ID")
+            if result is None:
+                raise AttributeError
+            return result
         except AttributeError:
             raise ImproperlyConfigured(
                 "GHOST_ADMIN_API_APP_ID setting is required to use django-ghost. Please add GHOST_ADMIN_API_APP_ID to settings.py"
@@ -32,7 +35,10 @@ class DjangoGhostSettings:
 
     def get_ghost_admin_app_secret(self) -> str:
         try:
-            return getattr(settings, "GHOST_ADMIN_API_APP_SECRET")
+            result = getattr(settings, "GHOST_ADMIN_API_APP_SECRET")
+            if result is None:
+                raise AttributeError
+            return result
         except AttributeError:
             raise ImproperlyConfigured(
                 "GHOST_ADMIN_API_APP_SECRET setting is required to use django-ghost. Please add GHOST_ADMIN_API_APP_SECRET to settings.py"
@@ -58,12 +64,10 @@ class DjangoGhostSettings:
 
         # Create the token (including decoding secret)
         key = bytes.fromhex(secret)
-        import pdb
 
-        pdb.set_trace()
         token = jwt.encode(payload, key, algorithm="HS256", headers=header)
         headers = {"Authorization": "Ghost {}".format(token)}
-        return header
+        return headers
 
     def get_ghost_admin_members_api_url(self):
         return f"{self.get_ghost_url()}/ghost/api/admin/members/"
