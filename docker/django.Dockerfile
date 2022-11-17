@@ -28,7 +28,7 @@ RUN python -m pip install --upgrade pip wheel setuptools
 RUN PYTHON=$(which python3) make dev-install
 
 ADD docker/entrypoint /entrypoint
-RUN echo "/workspace" > /usr/local/lib/python3.9/site-packages/django_nats_nkeys.pth
+RUN echo "/workspace" > /usr/local/lib/python3.9/site-packages/django_ghost.pth
 
 
 ENTRYPOINT [ "/entrypoint" ]

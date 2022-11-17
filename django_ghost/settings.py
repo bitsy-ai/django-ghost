@@ -1,3 +1,5 @@
+from typing import List, TypedDict
+
 from datetime import datetime as date
 import jwt
 
@@ -5,6 +7,14 @@ from django.db.models import Model
 from django.conf import settings
 from django.apps import apps as django_apps
 from django.core.exceptions import ImproperlyConfigured
+
+
+class GhostLabel(TypedDict):
+    name: str
+    slug: str
+
+
+DEFAULT_GHOST_LABEL = GhostLabel(name="django_ghost", slug="django_ghost")
 
 
 class DjangoGhostSettings:
@@ -21,6 +31,12 @@ class DjangoGhostSettings:
                 "GHOST_MEMBER_MODEL refers to model '{model}' "
                 "that has not been installed.".format(model=model_name)
             )
+
+    def get_ghost_newsletter_ids(self) -> List[str]:
+        return getattr(settings, "GHOST_NEWSLETTER_IDs", [])
+
+    def get_ghost_member_labels(self) -> List[GhostLabel]:
+        return getattr(settings, "GHOST_MEMBER_LABELS", [DEFAULT_GHOST_LABEL])
 
     def get_ghost_admin_app_id(self) -> str:
         try:

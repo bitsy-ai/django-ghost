@@ -8,7 +8,7 @@ if __name__ == "__main__":
     # This allows easy placement of apps within the interior
     # django_nats_nkeys directory.
     current_path = Path(__file__).parent.resolve()
-    sys.path.append(str(current_path / "django_nats_nkeys"))
+    sys.path.append(str(current_path / "django_ghost"))
     # tests directory
     sys.path.append(str(current_path / "tests"))
 
