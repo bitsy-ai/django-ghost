@@ -36,7 +36,7 @@ services:
   ghost:
     hostname: ghost
     container_name: django_ghost__ghost
-    image: ghost:22
+    image: ghost:5.22
     ports:
       - "2368:2368"
     environment:

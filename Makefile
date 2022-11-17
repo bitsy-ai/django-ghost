@@ -2,7 +2,7 @@ DIST ?= dist/
 BUILD_DIR ?= build/
 PIP ?= pip
 PYTHON ?= python
-PYTHON_VERSION ?= python3.8
+PYTHON_VERSION ?= python3.10
 VENV ?= .venv
 VENV_BIN ?= $(VENV)/bin
 SRC_DIR ?= django_nats_nkeys
@@ -27,17 +27,6 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*.egg' -exec rm -rf {} +
 
 clean: clean-dist clean-pyc clean-build
-
-clean-operator:
-	sudo chown -R $(USER) .
-	rm -rf .nats/config
-	rm -rf .nats/stores
-	rm -rf .nats/keys
-	rm .nats/DjangoOperator.conf
-	docker-compose -f docker/local.yml stop
-	docker-compose -f docker/local.yml rm
-	docker volume prune
-
 
 sdist: ## builds source package
 	$(PYTHON) setup.py sdist && ls -l dist
@@ -97,14 +86,6 @@ migrations:
 
 migrate:
 	docker-compose -f docker/local.yml run --rm django python manage.py migrate
-
-nsc-init:
-	docker-compose -f docker/local.yml exec django python manage.py nsc_init
-	docker-compose -f docker/local.yml restart nats
-	docker-compose -f docker/local.yml exec django python manage.py nsc_push
-
-nsc-env:
-	docker-compose -f docker/local.yml exec django python manage.py nsc_env
 
 docker-up-d:
 	docker-compose -f docker/local.yml up -d

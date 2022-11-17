@@ -25,7 +25,7 @@ setup(
     description="Django Ghost is a Django app to sync a Django model with Ghost CMS newsletter subscribers",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    license="GNU AGPLv3",
+    license="BSD",
     keywords="django ghost cms",
     url="http://github.com/bitsy-ai/django-ghost",
     classifiers=[
