@@ -8,11 +8,7 @@ from django_ghost import __version__
 long_description: str = open(
     os.path.join(os.path.dirname(__file__), "README.md")
 ).read()
-install_requires = [
-    "django>=3.2,<4",
-    "psycopg2",
-    "requests>=2.28",
-]
+install_requires = ["django>=3.2,<4", "psycopg2", "requests>=2.28", "jwt>=1.3"]
 
 python_requires = ">3.7"
 
