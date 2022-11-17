@@ -14,6 +14,7 @@ services:
     container_name: django_ghost__django
     depends_on:
       - postgres
+      - ghost
     volumes:
       - ../:/workspace:z
     ports:
