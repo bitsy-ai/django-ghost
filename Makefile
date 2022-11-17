@@ -5,7 +5,7 @@ PYTHON ?= python
 PYTHON_VERSION ?= python3.10
 VENV ?= .venv
 VENV_BIN ?= $(VENV)/bin
-SRC_DIR ?= django_nats_nkeys
+SRC_DIR ?= django_ghost
 TEST_DIR ?= tests
 
 
