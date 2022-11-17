@@ -16,31 +16,11 @@ class TestSettings(TestCase):
         with pytest.raises(ImproperlyConfigured):
             django_ghost_settings.get_member_model()
 
-    # @override_settings(NATS_ROBOT_APP_MODEL="invalid")
-    # def test_invalid_robot_app_model(self):
-    #     with pytest.raises(ImproperlyConfigured):
-    #         nats_nkeys_settings.get_nats_robot_app_model()
+    def test_missing_ghost_api_key(self):
+        with pytest.raises(ImproperlyConfigured):
+            django_ghost_settings.get_ghost_admin_api_auth_header()
 
-    # def test_defaults_valid(self):
-    #     from django_nats_nkeys.models import (
-    #         NatsOrganization,
-    #         NatsOrganizationUser,
-    #         NatsOrganizationOwner,
-    #         NatsOrganizationApp,
-    #         NatsRobotApp,
-    #     )
-
-    #     assert nats_nkeys_settings.get_nats_user_model() is NatsOrganizationUser
-    #     assert nats_nkeys_settings.get_nats_account_model() is NatsOrganization
-    #     assert (
-    #         nats_nkeys_settings.get_nats_organization_owner_model()
-    #         is NatsOrganizationOwner
-    #     )
-    #     assert (
-    #         nats_nkeys_settings.get_nats_organization_app_model() is NatsOrganizationApp
-    #     )
-
-    #     assert nats_nkeys_settings.get_nats_app_models() == [
-    #         NatsOrganizationApp,
-    #         NatsRobotApp,
-    #     ]
+    @override_settings(GHOST_ADMIN_API_KEY="invalid")
+    def test_invalid_ghost_api_key(self):
+        with pytest.raises(ImproperlyConfigured):
+            django_ghost_settings.get_ghost_admin_api_auth_header()

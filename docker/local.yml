@@ -41,4 +41,4 @@ services:
     environment:
       NODE_ENV: development
     volumes:
-      - ../data:/var/lib/ghost/content:z
+      - ../.ghost:/var/lib/ghost/content:z
