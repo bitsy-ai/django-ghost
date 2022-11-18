@@ -1,8 +1,6 @@
 from uuid import uuid4
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ImproperlyConfigured
-from django_ghost.settings import django_ghost_settings
 from django_ghost.models import GhostMember
 
 UserModel = get_user_model()
