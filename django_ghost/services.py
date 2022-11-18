@@ -6,12 +6,12 @@ from .models import GhostMember
 
 logger = logging.getLogger(__name__)
 
-GhostMemberModel = django_ghost_settings.get_member_model()
+GhostMemberModel = django_ghost_settings.get_sync_model()
 
 
 def create_ghost_member(instance: GhostMemberModel):
     """
-    instance - instance of model configured in settings.GHOST_MEMBER_MODEL (default: settings.AUTH_USER_MODEL)
+    instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     """
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
@@ -40,7 +40,7 @@ def create_ghost_member(instance: GhostMemberModel):
         obj = GhostMember.objects.create(
             email=member["email"],
             uuid=member["uuid"],
-            user=instance,
+            sync=instance,
             email_count=member["email_count"],
             email_open_rate=member["email_open_rate"],
             email_opened_count=member["email_opened_count"],
@@ -60,7 +60,7 @@ def create_ghost_member(instance: GhostMemberModel):
 
 def update_ghost_member(instance: GhostMemberModel, ghost_member: GhostMember):
     """
-    instance - instance of model configured in settings.GHOST_MEMBER_MODEL (default: settings.AUTH_USER_MODEL)
+    instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     ghost_member - instance of GhostMember, a different model.
 
     in retrospect, this naming could be more clear. @todo
@@ -110,10 +110,10 @@ def update_ghost_member(instance: GhostMemberModel, ghost_member: GhostMember):
 
 def update_or_create_ghost_member(instance: GhostMemberModel):
     """
-    instance - instance of model configured in settings.GHOST_MEMBER_MODEL (default: settings.AUTH_USER_MODEL)
+    instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     """
     # try to get get ghost member by email
-    ghost_member = GhostMember.objects.filter(email=instance.email).first()
+    ghost_member = GhostMember.objects.filter(sync=instance).first()
     if ghost_member is None:
         create_ghost_member(instance)
     else:

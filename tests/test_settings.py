@@ -13,10 +13,10 @@ class TestSettings(TestCase):
     def setUp(self):
         return super().setUp()
 
-    @override_settings(GHOST_MEMBER_MODEL="invalid.foo")
-    def test_invalid_ghost_member_model(self):
+    @override_settings(GHOST_SYNC_MODEL="invalid.foo")
+    def test_invalid_GHOST_SYNC_MODEL(self):
         with pytest.raises(ImproperlyConfigured):
-            django_ghost_settings.get_member_model()
+            django_ghost_settings.get_sync_model()
 
     @override_settings(GHOST_ADMIN_API_APP_ID=None, GHOST_ADMIN_API_APP_SECRET=None)
     def test_missing_ghost_api_key(self):

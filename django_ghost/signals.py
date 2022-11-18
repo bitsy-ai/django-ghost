@@ -8,7 +8,7 @@ from .settings import django_ghost_settings
 from .models import GhostMember
 from .services import update_or_create_ghost_member
 
-GhostMemberModel = django_ghost_settings.get_member_model()
+GhostMemberModel = django_ghost_settings.get_sync_model()
 
 logger = logging.getLogger(__name__)
 
