@@ -35,7 +35,7 @@ Settings
 ===========
 
 ### Basic Settings
-`GHOST_MEMBER_MODEL` (default: return value of `django.contrib.auth.get_user_model()` )
+`GHOST_SYNC_MODEL` (default: return value of `django.contrib.auth.get_user_model()` )
 
 `GHOST_NEWSLETTER_IDS` (default: []) - newsletter ids to subscribe to
 

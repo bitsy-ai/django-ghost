@@ -11,7 +11,7 @@ GhostMemberModel = django_ghost_settings.get_member_model()
 
 def create_ghost_member(instance: GhostMemberModel):
     """
-    instance - instance of model configured in settings.GHOST_MEMBER_MODEL (default: settings.AUTH_USER_MODEL)
+    instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     """
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
@@ -60,7 +60,7 @@ def create_ghost_member(instance: GhostMemberModel):
 
 def update_ghost_member(instance: GhostMemberModel, ghost_member: GhostMember):
     """
-    instance - instance of model configured in settings.GHOST_MEMBER_MODEL (default: settings.AUTH_USER_MODEL)
+    instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     ghost_member - instance of GhostMember, a different model.
 
     in retrospect, this naming could be more clear. @todo
@@ -110,7 +110,7 @@ def update_ghost_member(instance: GhostMemberModel, ghost_member: GhostMember):
 
 def update_or_create_ghost_member(instance: GhostMemberModel):
     """
-    instance - instance of model configured in settings.GHOST_MEMBER_MODEL (default: settings.AUTH_USER_MODEL)
+    instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     """
     # try to get get ghost member by email
     ghost_member = GhostMember.objects.filter(email=instance.email).first()

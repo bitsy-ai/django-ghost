@@ -18,17 +18,17 @@ DEFAULT_GHOST_LABEL = GhostLabel(name="django_ghost", slug="django_ghost")
 
 
 class DjangoGhostSettings:
-    def get_member_model_string(self) -> str:
-        return getattr(settings, "GHOST_MEMBER_MODEL", settings.AUTH_USER_MODEL)
+    def get_sync_model_string(self) -> str:
+        return getattr(settings, "GHOST_SYNC_MODEL", settings.AUTH_USER_MODEL)
 
-    def get_member_model(self) -> Model:
-        model_name = self.get_member_model_string()
+    def get_sync_model(self) -> Model:
+        model_name = self.get_sync_model_string()
         try:
             model = django_apps.get_model(model_name)
             return model
         except LookupError:
             raise ImproperlyConfigured(
-                "GHOST_MEMBER_MODEL refers to model '{model}' "
+                "GHOST_SYNC_MODEL refers to model '{model}' "
                 "that has not been installed.".format(model=model_name)
             )
 
