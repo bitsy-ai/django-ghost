@@ -21,7 +21,6 @@ Contributor's Guide
 1.  Create a development environment (requires docker & docker-compose):
 
         make docker-up
-        make nsc-init
 
 2.  Run tests and generate a coverage report:
 
@@ -37,5 +36,7 @@ Settings
 
 ### Basic Settings
 `GHOST_MEMBER_MODEL` (default: return value of `django.contrib.auth.get_user_model()` )
+`GHOST_NEWSLETTER_IDS` (default: []) - newsletter ids to subscribe to
+`GHOST_ADMIN_API_APP_ID`
+`GHOST_ADMIN_API_APP_SECRET`
 `GHOST_API_URL` (default: `"http://localhost` or `$GHOST_API_URL` environment var)
-`GHOST_ADMIN_TOKEN` (default: `$GHOST_ADMIN_TOKEN` environment var)
