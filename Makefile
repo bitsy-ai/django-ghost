@@ -90,5 +90,8 @@ migrate:
 docker-up-d:
 	docker-compose -f docker/local.yml up -d
 
+wait-for-services:
+	./docker/wait-for-services.sh
+
 docker-up:
 	docker-compose -f docker/local.yml up
