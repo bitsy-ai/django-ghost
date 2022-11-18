@@ -36,7 +36,12 @@ Settings
 
 ### Basic Settings
 `GHOST_MEMBER_MODEL` (default: return value of `django.contrib.auth.get_user_model()` )
+
 `GHOST_NEWSLETTER_IDS` (default: []) - newsletter ids to subscribe to
+
 `GHOST_ADMIN_API_APP_ID`
+
 `GHOST_ADMIN_API_APP_SECRET`
+
 `GHOST_API_URL` (default: `"http://localhost` or `$GHOST_API_URL` environment var)
+
