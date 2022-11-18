@@ -32,7 +32,7 @@ class Command(BaseCommand):
         if email is None:
             members_to_sync = GhostSyncModel.objects.all()
         else:
-            members_to_sync = GhostSyncModel.filter(email=email).all()
+            members_to_sync = GhostSyncModel.objects.filter(email=email).all()
 
         if limit is not None:
             members_to_sync = members_to_sync[:limit]
