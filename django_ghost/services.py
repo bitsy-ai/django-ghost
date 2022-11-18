@@ -6,10 +6,10 @@ from .models import GhostMember
 
 logger = logging.getLogger(__name__)
 
-GhostMemberModel = django_ghost_settings.get_sync_model()
+GhostSyncModel = django_ghost_settings.get_sync_model()
 
 
-def create_ghost_member(instance: GhostMemberModel):
+def create_ghost_member(instance: GhostSyncModel):
     """
     instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     """
@@ -58,7 +58,7 @@ def create_ghost_member(instance: GhostMemberModel):
         logger.info("Created %s for %s", obj, member["email"])
 
 
-def update_ghost_member(instance: GhostMemberModel, ghost_member: GhostMember):
+def update_ghost_member(instance: GhostSyncModel, ghost_member: GhostMember):
     """
     instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     ghost_member - instance of GhostMember, a different model.
@@ -108,7 +108,7 @@ def update_ghost_member(instance: GhostMemberModel, ghost_member: GhostMember):
             logger.info("Updated %s for %s", ghost_member, member["email"])
 
 
-def update_or_create_ghost_member(instance: GhostMemberModel):
+def update_or_create_ghost_member(instance: GhostSyncModel):
     """
     instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     """

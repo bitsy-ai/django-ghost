@@ -8,12 +8,12 @@ from .settings import django_ghost_settings
 from .models import GhostMember
 from .services import update_or_create_ghost_member
 
-GhostMemberModel = django_ghost_settings.get_sync_model()
+GhostSyncModel = django_ghost_settings.get_sync_model()
 
 logger = logging.getLogger(__name__)
 
 
-@receiver(post_save, sender=GhostMemberModel)
+@receiver(post_save, sender=GhostSyncModel)
 def ghost_member_create_or_update(
     sender, instance, created, update_fields=None, **kwargs
 ):
