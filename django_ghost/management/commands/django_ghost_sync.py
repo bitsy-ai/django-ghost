@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django_ghost.services import update_or_create_ghost_member
 from django_ghost.settings import django_ghost_settings
 
-GhostMemberModel = django_ghost_settings.get_member_model()
+GhostMemberModel = django_ghost_settings.get_sync_model()
 
 
 class Command(BaseCommand):
