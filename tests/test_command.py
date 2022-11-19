@@ -14,7 +14,7 @@ class TestCommand(TestCase):
             email="admin@test.com", password="testing1234", is_superuser=True
         )
 
-    def test_sync(self):
-        call_command("django_ghost_sync")
+    def test_sync_by_email(self):
+        call_command("django_ghost_sync", "--email", self.user.email)
         ghost_member = GhostMember.objects.get(email=self.user.email)
         assert ghost_member is not None

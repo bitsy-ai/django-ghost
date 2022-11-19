@@ -33,7 +33,8 @@ class DjangoGhostSettings:
             )
 
     def get_ghost_newsletter_ids(self) -> List[str]:
-        return getattr(settings, "GHOST_NEWSLETTER_IDS", [])
+        newsletter_ids = getattr(settings, "GHOST_NEWSLETTER_IDS", [])
+        return [dict(id=nid) for nid in newsletter_ids]
 
     def get_ghost_member_labels(self) -> List[GhostLabel]:
         return getattr(settings, "GHOST_MEMBER_LABELS", [DEFAULT_GHOST_LABEL])

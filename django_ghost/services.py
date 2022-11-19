@@ -9,15 +9,16 @@ logger = logging.getLogger(__name__)
 GhostSyncModel = django_ghost_settings.get_sync_model()
 
 
-def create_ghost_member(email: str):
+def get_ghost_member_by_email(email: str):
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
     url = django_ghost_settings.get_ghost_admin_members_api_url()
-
-    labels = django_ghost_settings.get_ghost_member_labels()
-    newsletters = django_ghost_settings.get_ghost_newsletter_ids()
-    body = {"members": [{"email": email, "labels": labels, "newsletters": newsletters}]}
-    res = requests.post(url, json=body, headers=headers)
+    filter = f"?filter=email:{email}&include=newsletters%2Clabels%2Ctiers"
+    url = f"{url}{filter}"
+    logger.info("Attempting GET %s", url)
+    res = requests.get(url, headers=headers)
+    logger.info("Received response: %s", res.json())
+    data = res.json()
     try:
         res.raise_for_status()
     except Exception as e:
@@ -28,7 +29,68 @@ def create_ghost_member(email: str):
             }
         )
         return
+
+    member = data.get("members")[0]
+    ghost_member = GhostMember.objects.filter(email=email).first()
+    if ghost_member is None:
+        obj = GhostMember.objects.create(
+            email=member["email"],
+            uuid=member["uuid"],
+            email_count=member["email_count"],
+            email_open_rate=member["email_open_rate"],
+            email_opened_count=member["email_opened_count"],
+            id=member["id"],
+            note=member["note"],
+            geolocation=member["geolocation"],
+            last_seen_at=member["last_seen_at"],
+            created_at=member["created_at"],
+            updated_at=member["updated_at"],
+            status=member["status"],
+            subscriptions=member["subscriptions"],
+            tiers=member["tiers"],
+            newsletters=member["newsletters"],
+        )
+        logger.info("Created %s for %s", obj, member["email"])
+    else:
+        ghost_member.email = member["email"]
+        ghost_member.note = member["note"]
+        ghost_member.geolocation = member["geolocation"]
+        ghost_member.last_seen_at = member["last_seen_at"]
+        ghost_member.created_at = member["created_at"]
+        ghost_member.updated_at = member["updated_at"]
+        ghost_member.labels = member["labels"]
+        ghost_member.subscriptions = member["subscriptions"]
+        ghost_member.tiers = member["tiers"]
+        ghost_member.newsletters = member["newsletters"]
+        ghost_member.save()
+        logger.info("Updated %s for %s", ghost_member, member["email"])
+
+
+def create_ghost_member(email: str):
+    # get authorization headers
+    headers = django_ghost_settings.get_ghost_admin_api_auth_header()
+    url = django_ghost_settings.get_ghost_admin_members_api_url()
+
+    labels = django_ghost_settings.get_ghost_member_labels()
+    newsletters = django_ghost_settings.get_ghost_newsletter_ids()
+
+    body = {"members": [{"email": email, "labels": labels, "newsletters": newsletters}]}
+    logger.info("Attempting POST %s with body %s", url, body)
+    res = requests.post(url, json=body, headers=headers)
+    logger.info("Received response: %s", res.json())
     data = res.json()
+    if res.status_code == 422:
+        return get_ghost_member_by_email(email)
+    try:
+        res.raise_for_status()
+    except Exception as e:
+        logger.error(
+            {
+                "msg": "POST /ghost/api/admin/members/ failed with error",
+                "error": e,
+            }
+        )
+        return
     for member in data.get("members"):
         obj = GhostMember.objects.create(
             email=member["email"],
@@ -59,7 +121,7 @@ def update_ghost_member(email: str, ghost_member: GhostMember):
     """
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
-    url = f"{django_ghost_settings.get_ghost_admin_members_api_url()}/{ghost_member.id}"
+    url = f"{django_ghost_settings.get_ghost_admin_members_api_url()}{ghost_member.id}"
 
     labels = django_ghost_settings.get_ghost_member_labels()
     newsletters = django_ghost_settings.get_ghost_newsletter_ids()
@@ -71,7 +133,12 @@ def update_ghost_member(email: str, ghost_member: GhostMember):
         body = {
             "members": [{"email": email, "labels": labels, "newsletters": newsletters}]
         }
+        logger.info("Attempting POST %s with body %s", url, body)
         res = requests.post(url, json=body, headers=headers)
+        logger.info("Received response: %s", res.json())
+        data = res.json()
+        if res.status_code == 422:
+            return get_ghost_member_by_email(email)
         try:
             res.raise_for_status()
         except Exception as e:
