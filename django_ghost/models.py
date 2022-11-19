@@ -2,7 +2,10 @@ from django.db import models
 from .settings import django_ghost_settings
 
 
-class GhostMember(models.Model):
+class AbstractGhostMember(models.Model):
+    class Meta:
+        abstract = True
+
     sync = models.ForeignKey(
         django_ghost_settings.get_sync_model_string(), on_delete=models.CASCADE
     )
@@ -26,3 +29,7 @@ class GhostMember(models.Model):
     subscriptions = models.JSONField(default=list)
     tiers = models.JSONField(default=list)
     newsletters = models.JSONField(default=list)
+
+
+class GhostMember(AbstractGhostMember):
+    pass
