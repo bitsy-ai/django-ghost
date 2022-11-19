@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django_ghost.models import GhostMember
 
+
 UserModel = get_user_model()
 
 
@@ -14,6 +15,7 @@ class TestSignals(TestCase):
         email = f"{uuid4()}@test.com"
         user = UserModel.objects.create(email=email)
         ghost_member = GhostMember.objects.get(email=email)
+
         assert user.email == ghost_member.email
         # updating user shouldn't throw any errors
         user.is_staff = True

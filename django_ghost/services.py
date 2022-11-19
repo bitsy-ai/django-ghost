@@ -1,3 +1,4 @@
+from typing import Optional, Dict, Any
 import logging
 import requests
 from .settings import django_ghost_settings
@@ -9,15 +10,16 @@ logger = logging.getLogger(__name__)
 GhostSyncModel = django_ghost_settings.get_sync_model()
 
 
-def create_ghost_member(email: str):
+def get_ghost_member_by_email(email: str) -> Optional[Dict[str, Any]]:
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
     url = django_ghost_settings.get_ghost_admin_members_api_url()
-
-    labels = django_ghost_settings.get_ghost_member_labels()
-    newsletters = django_ghost_settings.get_ghost_newsletter_ids()
-    body = {"members": [{"email": email, "labels": labels, "newsletters": newsletters}]}
-    res = requests.post(url, json=body, headers=headers)
+    filter = f"?filter=email:{email}"
+    url = f"{url}{filter}"
+    logger.info("Attempting GET %s", url)
+    res = requests.get(url, headers=headers)
+    logger.info("Received response: %s", res.json())
+    data = res.json()
     try:
         res.raise_for_status()
     except Exception as e:
@@ -25,10 +27,47 @@ def create_ghost_member(email: str):
             {
                 "msg": "POST /ghost/api/admin/members/ failed with error",
                 "error": e,
+                "data": data,
             }
         )
         return
+    if len(data.get("members")) > 1:
+        logger.warning(
+            "Ghost Member API returned more than 1 member matching email=%s data: %s",
+            email,
+            data,
+        )
+    elif len(data.get("members")) == 0:
+        logger.warning("Ghost Member API returned 0 results for query: %s", url)
+        return
+    return data.get("members")[0]
+
+
+def create_ghost_member(email: str):
+    # get authorization headers
+    headers = django_ghost_settings.get_ghost_admin_api_auth_header()
+    url = django_ghost_settings.get_ghost_admin_members_api_url()
+
+    labels = django_ghost_settings.get_ghost_member_labels()
+    newsletters = django_ghost_settings.get_ghost_newsletter_ids()
+
+    body = {"members": [{"email": email, "labels": labels, "newsletters": newsletters}]}
+    logger.info("Attempting POST %s with body %s", url, body)
+    res = requests.post(url, json=body, headers=headers)
+    logger.info("Received response: %s", res.json())
     data = res.json()
+    try:
+        res.raise_for_status()
+    except Exception as e:
+        logger.error(
+            {
+                "msg": "POST /ghost/api/admin/members/ failed with error",
+                "error": e,
+                "data": data,
+                "body": body,
+            }
+        )
+        return
     for member in data.get("members"):
         obj = GhostMember.objects.create(
             email=member["email"],
@@ -50,7 +89,7 @@ def create_ghost_member(email: str):
         logger.info("Created %s for %s", obj, member["email"])
 
 
-def update_ghost_member(email: str, ghost_member: GhostMember):
+def update_ghost_member(email: str, ghost_member: GhostMember, force_update=False):
     """
     instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     ghost_member - instance of GhostMember, a different model.
@@ -59,19 +98,24 @@ def update_ghost_member(email: str, ghost_member: GhostMember):
     """
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
-    url = f"{django_ghost_settings.get_ghost_admin_members_api_url()}/{ghost_member.id}"
+    url = f"{django_ghost_settings.get_ghost_admin_members_api_url()}{ghost_member.id}"
 
     labels = django_ghost_settings.get_ghost_member_labels()
     newsletters = django_ghost_settings.get_ghost_newsletter_ids()
 
     needs_update = (
-        ghost_member.labels != labels or ghost_member.newsletters != newsletters
+        ghost_member.labels != labels
+        or ghost_member.newsletters != newsletters
+        or force_update
     )
     if needs_update is True:
         body = {
             "members": [{"email": email, "labels": labels, "newsletters": newsletters}]
         }
+        logger.info("Attempting POST %s with body %s", url, body)
         res = requests.post(url, json=body, headers=headers)
+        logger.info("Received response: %s", res.json())
+        data = res.json()
         try:
             res.raise_for_status()
         except Exception as e:
@@ -79,6 +123,8 @@ def update_ghost_member(email: str, ghost_member: GhostMember):
                 {
                     "msg": "POST /ghost/api/admin/members/ failed with error",
                     "error": e,
+                    "data": data,
+                    "body": body,
                 }
             )
             return
@@ -102,9 +148,17 @@ def update_or_create_ghost_member(email: str):
     """
     instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     """
-    # try to get get ghost member by email
-    ghost_member = GhostMember.objects.filter(email=email).first()
-    if ghost_member is None:
+    # try to get get django ghost member model by email
+    django_ghost_member = GhostMember.objects.filter(email=email).first()
+
+    # try to get ghost member data by email
+    ghost_member = get_ghost_member_by_email(email)
+
+    # create both models
+    if ghost_member is None and django_ghost_member is None:
         create_ghost_member(email)
+    # create Ghost model (force_update=True), update Django model
+    elif django_ghost_member is not None and ghost_member is None:
+        update_ghost_member(email, django_ghost_member, force_update=True)
     else:
-        update_ghost_member(email, ghost_member)
+        update_ghost_member(email, django_ghost_member)
