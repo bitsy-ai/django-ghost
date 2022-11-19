@@ -9,21 +9,14 @@ logger = logging.getLogger(__name__)
 GhostSyncModel = django_ghost_settings.get_sync_model()
 
 
-def create_ghost_member(instance: GhostSyncModel):
-    """
-    instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
-    """
+def create_ghost_member(email: str):
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
     url = django_ghost_settings.get_ghost_admin_members_api_url()
 
     labels = django_ghost_settings.get_ghost_member_labels()
     newsletters = django_ghost_settings.get_ghost_newsletter_ids()
-    body = {
-        "members": [
-            {"email": instance.email, "labels": labels, "newsletters": newsletters}
-        ]
-    }
+    body = {"members": [{"email": email, "labels": labels, "newsletters": newsletters}]}
     res = requests.post(url, json=body, headers=headers)
     try:
         res.raise_for_status()
@@ -40,7 +33,6 @@ def create_ghost_member(instance: GhostSyncModel):
         obj = GhostMember.objects.create(
             email=member["email"],
             uuid=member["uuid"],
-            sync=instance,
             email_count=member["email_count"],
             email_open_rate=member["email_open_rate"],
             email_opened_count=member["email_opened_count"],
@@ -58,7 +50,7 @@ def create_ghost_member(instance: GhostSyncModel):
         logger.info("Created %s for %s", obj, member["email"])
 
 
-def update_ghost_member(instance: GhostSyncModel, ghost_member: GhostMember):
+def update_ghost_member(email: str, ghost_member: GhostMember):
     """
     instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     ghost_member - instance of GhostMember, a different model.
@@ -77,9 +69,7 @@ def update_ghost_member(instance: GhostSyncModel, ghost_member: GhostMember):
     )
     if needs_update is True:
         body = {
-            "members": [
-                {"email": instance.email, "labels": labels, "newsletters": newsletters}
-            ]
+            "members": [{"email": email, "labels": labels, "newsletters": newsletters}]
         }
         res = requests.post(url, json=body, headers=headers)
         try:
@@ -108,13 +98,13 @@ def update_ghost_member(instance: GhostSyncModel, ghost_member: GhostMember):
             logger.info("Updated %s for %s", ghost_member, member["email"])
 
 
-def update_or_create_ghost_member(instance: GhostSyncModel):
+def update_or_create_ghost_member(email: str):
     """
     instance - instance of model configured in settings.GHOST_SYNC_MODEL (default: settings.AUTH_USER_MODEL)
     """
     # try to get get ghost member by email
-    ghost_member = GhostMember.objects.filter(sync=instance).first()
+    ghost_member = GhostMember.objects.filter(email=email).first()
     if ghost_member is None:
-        create_ghost_member(instance)
+        create_ghost_member(email)
     else:
-        update_ghost_member(instance, ghost_member)
+        update_ghost_member(email, ghost_member)
