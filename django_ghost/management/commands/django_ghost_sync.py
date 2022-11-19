@@ -30,7 +30,7 @@ class Command(BaseCommand):
         members_to_sync = GhostSyncModel.objects.all()
 
         if email is not None:
-            return update_or_create_ghost_member(member.email)
+            return update_or_create_ghost_member(email)
 
         members_to_sync = GhostSyncModel.objects.filter(email=email).all()
         if limit is not None:
