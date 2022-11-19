@@ -33,7 +33,7 @@ class DjangoGhostSettings:
             )
 
     def get_ghost_newsletter_ids(self) -> List[str]:
-        return getattr(settings, "GHOST_NEWSLETTER_IDs", [])
+        return getattr(settings, "GHOST_NEWSLETTER_IDS", [])
 
     def get_ghost_member_labels(self) -> List[GhostLabel]:
         return getattr(settings, "GHOST_MEMBER_LABELS", [DEFAULT_GHOST_LABEL])
