@@ -29,13 +29,12 @@ class Command(BaseCommand):
         limit = kwargs.get("limit")
         members_to_sync = GhostSyncModel.objects.all()
 
-        if email is None:
-            members_to_sync = GhostSyncModel.objects.all()
-        else:
-            members_to_sync = GhostSyncModel.objects.filter(email=email).all()
+        if email is not None:
+            return update_or_create_ghost_member(member.email)
 
+        members_to_sync = GhostSyncModel.objects.filter(email=email).all()
         if limit is not None:
             members_to_sync = members_to_sync[:limit]
 
         for member in members_to_sync:
-            update_or_create_ghost_member(member)
+            update_or_create_ghost_member(member.email)

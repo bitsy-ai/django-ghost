@@ -3,9 +3,7 @@ from .settings import django_ghost_settings
 
 
 class GhostMember(models.Model):
-    sync = models.ForeignKey(
-        django_ghost_settings.get_sync_model_string(), on_delete=models.CASCADE
-    )
+
     email = models.EmailField()
     id = models.CharField(max_length=255, primary_key=True)
     uuid = models.UUIDField()
