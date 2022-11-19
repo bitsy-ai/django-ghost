@@ -18,4 +18,4 @@ def ghost_member_create_or_update(
     sender, instance, created, update_fields=None, **kwargs
 ):
 
-    update_or_create_ghost_member(instance)
+    update_or_create_ghost_member(instance.email)
