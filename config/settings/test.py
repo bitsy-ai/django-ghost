@@ -93,7 +93,7 @@ AUTH_USER_MODEL = "testapp.CustomUser"
 # the following values are stored in .ghost/data/ghost-test.db (sqlite3) and are intended for test purposes only
 GHOST_ADMIN_EMAIL = "admin@test.com"
 GHOST_ADMIN_PASSWORD = "testing1234"
-GHOST_NEWSLETTER_IDS = ["63784fe514cb430001eb2315", "63768218d04dac0001bfc2e0"]
+GHOST_NEWSLETTER_IDS = ["63768218d04dac0001bfc2e0"]
 GHOST_CONTENT_API_KEY = "61c3677e599df7938eccab219b"
 GHOST_ADMIN_API_APP_ID = "63768243d04dac0001bfc4e3"
 GHOST_ADMIN_API_APP_SECRET = (
