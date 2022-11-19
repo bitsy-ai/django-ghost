@@ -13,7 +13,7 @@ def get_ghost_member_by_email(email: str):
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
     url = django_ghost_settings.get_ghost_admin_members_api_url()
-    filter = f"?filter=email:{email}&include=newsletters%2Clabels%2Ctiers"
+    filter = f"?filter=email:{email}&include=newsletters,labels,tiers"
     url = f"{url}{filter}"
     logger.info("Attempting GET %s", url)
     res = requests.get(url, headers=headers)
@@ -30,40 +30,49 @@ def get_ghost_member_by_email(email: str):
         )
         return
 
-    member = data.get("members")[0]
-    ghost_member = GhostMember.objects.filter(email=email).first()
-    if ghost_member is None:
-        obj = GhostMember.objects.create(
-            email=member["email"],
-            uuid=member["uuid"],
-            email_count=member["email_count"],
-            email_open_rate=member["email_open_rate"],
-            email_opened_count=member["email_opened_count"],
-            id=member["id"],
-            note=member["note"],
-            geolocation=member["geolocation"],
-            last_seen_at=member["last_seen_at"],
-            created_at=member["created_at"],
-            updated_at=member["updated_at"],
-            status=member["status"],
-            subscriptions=member["subscriptions"],
-            tiers=member["tiers"],
-            newsletters=member["newsletters"],
+    if len(data.get("members")) > 1:
+        logger.warning(
+            "Ghost Member API returned more than 1 member matching email=%s data: %s",
+            email,
+            data,
         )
-        logger.info("Created %s for %s", obj, member["email"])
-    else:
-        ghost_member.email = member["email"]
-        ghost_member.note = member["note"]
-        ghost_member.geolocation = member["geolocation"]
-        ghost_member.last_seen_at = member["last_seen_at"]
-        ghost_member.created_at = member["created_at"]
-        ghost_member.updated_at = member["updated_at"]
-        ghost_member.labels = member["labels"]
-        ghost_member.subscriptions = member["subscriptions"]
-        ghost_member.tiers = member["tiers"]
-        ghost_member.newsletters = member["newsletters"]
-        ghost_member.save()
-        logger.info("Updated %s for %s", ghost_member, member["email"])
+    elif len(data.get("members")) == 0:
+        logger.warning("Ghost Member API returned 0 results for query: %s", url)
+
+    for member in data.get("members"):
+        ghost_member = GhostMember.objects.filter(email=email).first()
+        if ghost_member is None:
+            obj = GhostMember.objects.create(
+                email=member["email"],
+                uuid=member["uuid"],
+                email_count=member["email_count"],
+                email_open_rate=member["email_open_rate"],
+                email_opened_count=member["email_opened_count"],
+                id=member["id"],
+                note=member["note"],
+                geolocation=member["geolocation"],
+                last_seen_at=member["last_seen_at"],
+                created_at=member["created_at"],
+                updated_at=member["updated_at"],
+                status=member["status"],
+                subscriptions=member["subscriptions"],
+                tiers=member["tiers"],
+                newsletters=member["newsletters"],
+            )
+            logger.info("Created %s for %s", obj, member["email"])
+        else:
+            ghost_member.email = member["email"]
+            ghost_member.note = member["note"]
+            ghost_member.geolocation = member["geolocation"]
+            ghost_member.last_seen_at = member["last_seen_at"]
+            ghost_member.created_at = member["created_at"]
+            ghost_member.updated_at = member["updated_at"]
+            ghost_member.labels = member["labels"]
+            ghost_member.subscriptions = member["subscriptions"]
+            ghost_member.tiers = member["tiers"]
+            ghost_member.newsletters = member["newsletters"]
+            ghost_member.save()
+            logger.info("Updated %s for %s", ghost_member, member["email"])
 
 
 def create_ghost_member(email: str):
