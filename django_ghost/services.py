@@ -1,7 +1,6 @@
 from typing import Optional, Dict, Any
 import logging
 import requests
-import urllib.parse
 from .settings import django_ghost_settings
 from .models import GhostMember
 
@@ -15,8 +14,7 @@ def get_ghost_member_by_email(email: str) -> Optional[Dict[str, Any]]:
     # get authorization headers
     headers = django_ghost_settings.get_ghost_admin_api_auth_header()
     url = django_ghost_settings.get_ghost_admin_members_api_url()
-    escaped_email = urllib.parse.quote(email)
-    filter = f"?filter=email:{escaped_email}"
+    filter = f"?filter=email:'{email}'"
     url = f"{url}{filter}"
     logger.info("Attempting GET %s", url)
     res = requests.get(url, headers=headers)
