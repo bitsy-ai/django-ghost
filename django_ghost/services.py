@@ -178,8 +178,10 @@ def update_or_create_ghost_member(email: str) -> GhostMember:
     elif django_ghost_member is not None and ghost_member is None:
         # create remote ghost model
         ghost_member_data = create_ghost_member(email)
+
         # update existing django model
         if ghost_member_data is not None:
+            logger.info("Created ghost member: %s", ghost_member_data)
             ghost_member.email = ghost_member_data["email"]
             ghost_member.note = ghost_member_data["note"]
             ghost_member.geolocation = ghost_member_data["geolocation"]
