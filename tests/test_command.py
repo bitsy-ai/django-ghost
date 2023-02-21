@@ -11,7 +11,7 @@ User = get_user_model()
 class TestCommand(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.email = f"{uuid4()}@test.com"
+        self.email = f"{uuid4()}+specialchar@test.com"
         self.user = User.objects.create(
             email=self.email, password="testing1234", is_superuser=True
         )
