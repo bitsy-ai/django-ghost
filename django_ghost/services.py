@@ -182,17 +182,17 @@ def update_or_create_ghost_member(email: str) -> GhostMember:
         # update existing django model
         if ghost_member_data is not None:
             logger.info("Created ghost member: %s", ghost_member_data)
-            ghost_member.email = ghost_member_data["email"]
-            ghost_member.note = ghost_member_data["note"]
-            ghost_member.geolocation = ghost_member_data["geolocation"]
-            ghost_member.last_seen_at = ghost_member_data["last_seen_at"]
-            ghost_member.created_at = ghost_member_data["created_at"]
-            ghost_member.updated_at = ghost_member_data["updated_at"]
-            ghost_member.labels = ghost_member_data["labels"]
-            ghost_member.subscriptions = ghost_member_data["subscriptions"]
-            ghost_member.tiers = ghost_member_data["tiers"]
-            ghost_member.newsletters = ghost_member_data["newsletters"]
-            ghost_member.save()
+            django_ghost_member.email = ghost_member_data["email"]
+            django_ghost_member.note = ghost_member_data["note"]
+            django_ghost_member.geolocation = ghost_member_data["geolocation"]
+            django_ghost_member.last_seen_at = ghost_member_data["last_seen_at"]
+            django_ghost_member.created_at = ghost_member_data["created_at"]
+            django_ghost_member.updated_at = ghost_member_data["updated_at"]
+            django_ghost_member.labels = ghost_member_data["labels"]
+            django_ghost_member.subscriptions = ghost_member_data["subscriptions"]
+            django_ghost_member.tiers = ghost_member_data["tiers"]
+            django_ghost_member.newsletters = ghost_member_data["newsletters"]
+            django_ghost_member.save()
             logger.info("Updated %s for %s", ghost_member, email)
     else:
         logger.error(
