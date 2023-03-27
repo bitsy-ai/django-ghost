@@ -69,9 +69,6 @@ tests/fixtures/testsqldbsetup.json: tests/fixtures/testsqldbsetup.sql
 images:
 	docker-compose -f docker/local.yml build
 
-tox:
-	docker-compose -f docker/local.yml exec django tox
-
 dev:
 	docker-compose -f docker/local.yml up
 
@@ -84,8 +81,8 @@ migrations:
 migrate:
 	docker-compose -f docker/local.yml run --rm django python manage.py migrate
 
-docker-up-d:
-	docker-compose -f docker/local.yml up -d
+docker-up-ci:
+	docker-compose -f docker/test.yml up -d
 
 wait-for-services:
 	./docker/wait-for-services.sh

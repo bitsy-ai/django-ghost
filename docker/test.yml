@@ -1,0 +1,36 @@
+version: "3"
+
+volumes:
+  local_django_ghost_postgres_data: {}
+
+services:
+  postgres:
+    hostname: postgres
+    image: postgres:14
+    container_name: django_ghost__postgres
+    volumes:
+      - local_django_ghost_postgres_data:/var/lib/postgresql/data:z
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    networks:
+      - overlay
+  ghost:
+    hostname: ghost
+    container_name: django_ghost__ghost
+    image: ghost:5.22
+    ports:
+      - "2368:2368"
+    environment:
+      NODE_ENV: development
+      database__client: sqlite3
+      database__connection__filename: content/data/ghost-test.db
+      database__useNullAsDefault: "true"
+      database__debug: "true"
+    volumes:
+      - ../.ghost:/var/lib/ghost/content:z
+    networks:
+      - overlay
+networks:
+  overlay:

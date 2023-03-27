@@ -30,8 +30,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Wait for services
         run: |
-          make docker-up-d
-          make wait-for-services
+          make docker-up-ci
+          python -m pip install -r dev-requirements.txt
       - name: Run Pytest
         run: |
           tox

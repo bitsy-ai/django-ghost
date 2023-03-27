@@ -5,7 +5,7 @@ from pathlib import Path
 
 if __name__ == "__main__":
     os.environ.setdefault(
-        "DJANGO_SETTINGS_MODULE", "django_ghost.tests.apps.settings.test"
+        "DJANGO_SETTINGS_MODULE", "django_ghost.tests.apps.settings.tox"
     )
     # This allows easy placement of apps within the interior
     # django_nats_nkeys directory.
