@@ -39,14 +39,16 @@ USE_TZ = True
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-DATABASES = {"default": {
-    "USER": "debug",
-    "ENGINE": "django.db.backends.postgresql",
-    "PASSWORD": "debug",
-    "HOST": "postgres",
-    "PORT": 5432,
-    "NAME": "django"
-}}
+DATABASES = {
+    "default": {
+        "USER": "debug",
+        "ENGINE": "django.db.backends.postgresql",
+        "PASSWORD": "debug",
+        "HOST": "postgres",
+        "PORT": 5432,
+        "NAME": "django",
+    }
+}
 
 TEMPLATES = [
     {
