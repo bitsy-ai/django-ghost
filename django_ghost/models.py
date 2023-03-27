@@ -3,7 +3,6 @@ from .settings import django_ghost_settings
 
 
 class GhostMember(models.Model):
-
     email = models.EmailField()
     id = models.CharField(max_length=255, primary_key=True)
     uuid = models.UUIDField()

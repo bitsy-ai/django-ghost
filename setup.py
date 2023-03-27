@@ -8,9 +8,9 @@ from django_ghost import __version__
 long_description: str = open(
     os.path.join(os.path.dirname(__file__), "README.md")
 ).read()
-install_requires = ["django>=3.2,<4", "psycopg2", "requests>=2.28", "PyJWT>=2.6"]
+install_requires = ["django", "psycopg2", "requests", "PyJWT"]
 
-python_requires = ">3.7"
+python_requires = ">3.9"
 
 setup(
     name="django_ghost",
@@ -27,9 +27,11 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Framework :: Django",
-        "Framework :: Django :: 3.1",
         "Framework :: Django :: 3.2",
+        "Framework :: Django :: 4.1",
+        "Framework :: Django :: 4.2",
     ],
     zip_safe=True,
     install_requires=install_requires,

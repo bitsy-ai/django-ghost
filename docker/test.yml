@@ -2,28 +2,8 @@ version: "3"
 
 volumes:
   local_django_ghost_postgres_data: {}
+
 services:
-  django: &django # enables use of pdb
-    stdin_open: true
-    tty: true
-    build:
-      context: ../
-      dockerfile: ./docker/django.Dockerfile
-    image: django_ghost
-    container_name: django_ghost__django
-    depends_on:
-      - postgres
-      - ghost
-    volumes:
-      - ../:/workspace:z
-    ports:
-      - "8802:8000"
-    env_file:
-      - .env
-    command:
-      - ./start
-    networks:
-      - overlay
   postgres:
     hostname: postgres
     image: postgres:14
