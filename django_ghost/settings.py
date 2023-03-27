@@ -70,7 +70,6 @@ class DjangoGhostSettings:
             )
 
     def get_ghost_admin_api_auth_header(self) -> str:
-
         app_id = self.get_ghost_admin_app_id()
         secret = self.get_ghost_admin_app_secret()
 

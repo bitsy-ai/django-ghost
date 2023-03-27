@@ -1,4 +1,3 @@
-from click import BaseCommand
 from django.core.management.base import BaseCommand, CommandParser
 
 from django_ghost.services import update_or_create_ghost_member
@@ -9,7 +8,6 @@ GhostSyncModel = django_ghost_settings.get_sync_model()
 
 class Command(BaseCommand):
     def add_arguments(self, parser: CommandParser) -> None:
-
         parser.add_argument(
             "--email",
             type=str,
@@ -24,7 +22,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs):
-
         email = kwargs.get("email")
         limit = kwargs.get("limit")
 

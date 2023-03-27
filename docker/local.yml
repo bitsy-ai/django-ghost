@@ -4,7 +4,6 @@ volumes:
   local_django_ghost_postgres_data: {}
 services:
   django: &django # enables use of pdb
-    hostname: django
     stdin_open: true
     tty: true
     build:
@@ -23,6 +22,8 @@ services:
       - .env
     command:
       - ./start
+    networks:
+      - overlay
   postgres:
     hostname: postgres
     image: postgres:14
@@ -32,7 +33,9 @@ services:
     env_file:
       - .env
     ports:
-      - "5433:5432"
+      - "5432:5432"
+    networks:
+      - overlay
   ghost:
     hostname: ghost
     container_name: django_ghost__ghost
@@ -47,3 +50,7 @@ services:
       database__debug: "true"
     volumes:
       - ../.ghost:/var/lib/ghost/content:z
+    networks:
+      - overlay
+networks:
+  overlay:
